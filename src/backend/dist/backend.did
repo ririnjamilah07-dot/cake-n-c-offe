@@ -1,0 +1,202 @@
+type _ImmutableObjectStorageRefillResult = 
+ record {
+   success: opt bool;
+   topped_up_amount: opt nat;
+ };
+type _ImmutableObjectStorageRefillInformation = record {
+                                                  proposed_top_up_amount:
+                                                   opt nat;};
+type _ImmutableObjectStorageCreateCertificateResult = 
+ record {
+   blob_hash: text;
+   method: text;
+ };
+type WeightOption = 
+ record {
+   price: nat;
+   weight: text;
+ };
+type Value = 
+ variant {
+   "bool": bool;
+   float: float64;
+   "int": int;
+   "nat": nat;
+   "null";
+   "text": text;
+ };
+type UserRole = 
+ variant {
+   admin;
+   guest;
+   user;
+ };
+type RoastLevel = 
+ variant {
+   dark;
+   light;
+   medium;
+   mediumDark;
+ };
+type Result__1 = 
+ variant {
+   err: Error;
+   ok;
+ };
+type Result = 
+ record {
+   hasMore: bool;
+   rows: vec vec Cell;
+ };
+type ProductSort = 
+ variant {
+   nameAsc;
+   nameDesc;
+   priceAsc;
+   priceDesc;
+ };
+type ProductQuery = 
+ record {
+   origin: opt text;
+   roastLevel: opt RoastLevel;
+   search: opt text;
+   sort: opt ProductSort;
+ };
+type ProductId = nat;
+type Product = 
+ record {
+   description: text;
+   featured: bool;
+   id: ProductId;
+   image: ExternalBlob;
+   inStock: bool;
+   name: text;
+   origin: text;
+   roastLevel: RoastLevel;
+   slug: text;
+   tastingNotes: vec text;
+   weightOptions: vec WeightOption;
+ };
+type OrderStatus = 
+ variant {
+   completed;
+   confirmed;
+   new;
+ };
+type OrderReference = text;
+type OrderLineItem = 
+ record {
+   lineTotal: nat;
+   productId: ProductId;
+   productName: text;
+   quantity: nat;
+   unitPrice: nat;
+   weight: text;
+ };
+type OrderInput = 
+ record {
+   address: text;
+   customerName: text;
+   email: text;
+   items: vec OrderLineItem;
+   notes: text;
+   phone: text;
+ };
+type OrderId = nat;
+type Order = 
+ record {
+   address: text;
+   createdAt: int;
+   customerName: text;
+   email: text;
+   id: OrderId;
+   items: vec OrderLineItem;
+   notes: text;
+   phone: text;
+   reference: OrderReference;
+   status: OrderStatus;
+   total: nat;
+ };
+type ExternalBlob = blob;
+type Error = 
+ variant {
+   AmbiguousAttribute: record {
+                         field: text;
+                         sources: vec text;
+                       };
+   FrontendOriginMismatch: record {
+                             expected: vec text;
+                             got: text;
+                           };
+   FrontendOriginsNotConfigured;
+   MalformedCandid;
+   MissingField: text;
+   MixedSsoSources: record {
+                      otherKeys: vec text;
+                      ssoKeys: vec text;
+                    };
+   NoAttributes;
+   Stale: record {ageNs: nat;};
+   UnknownNonce;
+   UntrustedSsoSource: record {domain: text;};
+ };
+type DayHours = 
+ record {
+   days: text;
+   hours: text;
+ };
+type Cell = 
+ record {
+   name: text;
+   value: Value;
+ };
+type BusinessInfo = 
+ record {
+   address: text;
+   email: text;
+   name: text;
+   openingHours: vec DayHours;
+   phone: text;
+   tagline: text;
+ };
+service : {
+  __accessControlState: () -> (reserved) query;
+  __businessInfo: () -> (BusinessInfo) query;
+  __orderState: () -> (reserved) query;
+  __orders: () -> (reserved) query;
+  __productState: () -> (reserved) query;
+  __products: () -> (reserved) query;
+  _immutableObjectStorageBlobsAreLive: (hashes: vec blob) -> (vec bool) query;
+  _immutableObjectStorageBlobsToDelete: () -> (vec blob) query;
+  _immutableObjectStorageConfirmBlobDeletion: (blobs: vec blob) -> ();
+  _immutableObjectStorageCreateCertificate: (blobHash: text) ->
+   (_ImmutableObjectStorageCreateCertificateResult);
+  _immutableObjectStorageRefillCashier: (refillInformation:
+   opt _ImmutableObjectStorageRefillInformation) ->
+   (_ImmutableObjectStorageRefillResult);
+  _immutableObjectStorageUpdateGatewayPrincipals: () -> ();
+  _initialize_access_control: () -> ();
+  _internet_identity_sign_in_finish: () -> (Result__1);
+  _internet_identity_sign_in_start: () -> (blob);
+  assignCallerUserRole: (user: principal, role: UserRole) -> ();
+  createOrder: (input: OrderInput) -> (Order);
+  createProduct: (product: Product) -> (ProductId);
+  deleteOrder: (id: OrderId) -> ();
+  deleteProduct: (id: ProductId) -> ();
+  execute: (qJson: text) -> (Result) query;
+  /// Static, human-readable documentation of the public backend API.
+  /// Authored from the current source; reads no runtime state.
+  getApiDoc: () -> (text) query;
+  /// Public read of the shop / business information.
+  getBusinessInfo: () -> (BusinessInfo) query;
+  getCallerUserRole: () -> (UserRole) query;
+  getProduct: (id: ProductId) -> (opt Product) query;
+  isCallerAdmin: () -> (bool) query;
+  listOrders: () -> (vec Order) query;
+  /// Public catalog reads and admin product management.
+  listProducts: (productQuery: ProductQuery) -> (vec Product) query;
+  schema: () -> (text) query;
+  setOrderStatus: (id: OrderId, status: OrderStatus) -> ();
+  setProductStock: (id: ProductId, inStock: bool) -> ();
+  updateProduct: (product: Product) -> ();
+}

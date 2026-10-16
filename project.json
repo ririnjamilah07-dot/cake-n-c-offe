@@ -1,0 +1,22 @@
+{
+  "overview": "A coffee bean storefront where customers browse beans, build a cart, and place orders, with an admin area to manage products and orders.",
+  "features": [
+    "Browse a catalog of coffee beans with photos, roast level, origin, and price",
+    "Filter and sort beans, and search by name or origin",
+    "Open a product page with tasting notes and available weights",
+    "Add beans to a cart that persists across page refreshes",
+    "Check out with delivery details and receive an order reference",
+    "Get an order confirmation email",
+    "Admin sign-in to add, edit, and remove products",
+    "Admin order inbox to track and update order status"
+  ],
+  "category": "e-commerce",
+  "tags": [
+    "coffee",
+    "e-commerce",
+    "catalog",
+    "orders",
+    "storefront"
+  ],
+  "last_updated": "2026-10-16T16:24:24.047Z"
+}
